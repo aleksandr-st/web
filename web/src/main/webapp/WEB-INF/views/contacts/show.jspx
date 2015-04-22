@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:joda="http://www.joda.org/joda/time/tags"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_contact_info" var="labelContactInfo"/>
+	<spring:message code="label_contact_first_name" var="labelContactFirstName"/>
+	<spring:message code="label_contact_last_name" var="labelContactLastName"/>
+	<spring:message code="label_contact_birth_date" var="labelContactBirthDate"/>
+	<spring:message code="date_format_pattern" var="dateFormatPattern"/>
+	<spring:message code="label_contact_data" var="labelContactData"/>
+	<spring:message code="label_contact_hobbies" var="labelContactHobbies"/>
+	<spring:message code="label_contact_places" var="labelContactPlaces"/>
+	<spring:message code="label_contact_friends" var="labelContactFriends"/>
+	<spring:message code="label_contact_details" var="labelContactDetails"/>
+	<spring:message code="label_contact_update" var="labelContactUpdate"/>
+	<spring:url value="/contacts" var="editContactUrl" />
+
+	<h1>${labelContactInfo}</h1>
+	<div id="contactInfo">
+		<c:if test="${not empty message}">
+			<div id="message" class="${message.type}">${message.message}</div>
+		</c:if>
+		<div>
+			<span id="contactData" class="activeTab tabs">${labelContactData}</span>| 
+			<span id="contactHobbies" class="tabs">${labelContactHobbies}</span>|
+			<span id="contactPlaces" class="tabs">${labelContactPlaces}</span>|
+			<span id="contactFriends" class="tabs">${labelContactFriends}</span>|
+			<span id="contactDetails" class="tabs">${labelContactDetails}</span>
+		</div>
+		<div id="contactDataTab">
+			<table>
+				<tr>
+					<td width="30%">${labelContactFirstName}</td>
+					<td>${contact.firstName}</td>
+				</tr>
+				<tr>
+					<td width="30%">${labelContactLastName}</td>
+					<td>${contact.lastName}</td>
+				</tr>
+				<tr>
+					<td width="30%">${labelContactBirthDate}</td>
+					<td><joda:format value="${contact.birthDate}"
+							pattern="${dateFormatPattern}" /></td>
+				</tr>
+			</table>
+			<div id="id" style="display: none;" value="${contact.id}">
+				${contact.id}
+			</div>
+		</div>
+		<div id="contactHobbiesTab" class="hiddenTab">
+			<table>
+				<c:if test="${not empty contact.hobbies}">
+					<tr>
+						<td width="30%" rowspan="${contact.hobbies.size()+1}">${labelContactHobbies}:</td>
+					</tr>
+					<c:forEach var="hobby" items="${contact.hobbies}">
+						<tr>
+							<td>${hobby.title}</td>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</table>
+		</div>
+		<div id="contactPlacesTab" class="hiddenTab">
+			<table>
+				<c:if test="${not empty contact.places}">
+					<tr>
+						<td width="30%" rowspan="${contact.places.size()+1}">${labelContactPlaces}:</td>
+					</tr>
+					<c:forEach var="place" items="${contact.places}">
+						<tr>
+							<td>${place.title}</td>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</table>
+		</div>
+		<div id="contactFriendsTab" class="hiddenTab">
+			<table>
+				<c:if test="${not empty contact.friends}">
+					<tr>
+						<td width="30%" rowspan="${contact.friends.size()+1}">${labelContactFriends}:</td>
+					</tr>
+					<c:forEach var="friend" items="${contact.friends}">
+						<tr>
+							<td>${friend.firstName} ${friend.lastName}</td>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</table>
+		</div>
+		<div id="contactDetailsTab" class="hiddenTab">
+			<table>
+				<c:if test="${not empty contact.contactDetails}">
+					<tr>
+						<td width="30%" rowspan="${contact.contactDetails.size()+1}">${labelContactDetails}:</td>
+					</tr>
+					<c:forEach var="contactDetails" items="${contact.contactDetails}">
+						<tr>
+							<td>${contactDetails.type}: ${contactDetails.data}</td>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</table>
+		</div>
+		<a href="${editContactUrl}/${contact.id}?form">${labelContactUpdate}</a>
+	</div>
+	
+</div>

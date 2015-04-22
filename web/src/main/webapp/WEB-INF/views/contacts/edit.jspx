@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form"
+	xmlns:joda="http://www.joda.org/joda/time/tags"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_contact_new" var="labelContactNew"/>
+	<spring:message code="label_contact_update" var="labelContactUpdate"/>
+	<spring:message code="label_contact_first_name" var="labelContactFirstName"/>
+	<spring:message code="label_contact_last_name" var="labelContactLastName"/>
+	<spring:message code="label_contact_birth_date" var="labelContactBirthDate"/>
+	<spring:message code="label_contact_data" var="labelContactData"/>
+	<spring:message code="label_contact_hobbies" var="labelContactHobbies"/>
+	<spring:message code="label_contact_places" var="labelContactPlaces"/>
+	<spring:message code="label_contact_friends" var="labelContactFriends"/>
+	<spring:message code="label_contact_details" var="labelContactDetails"/>
+	<spring:message code="label_contact_view" var="labelContactView"/>
+	<spring:url value="/contacts" var="viewContactUrl" />
+	<spring:eval expression="contact.id == null ? labelContactNew:labelContactUpdate" var="formTitle" />
+	<spring:eval expression="contact.id == null ? '':'/'+contact.id" var="contactId" />
+
+	<h1>${formTitle}</h1>
+	<div id="contactUpdate">
+		<div>
+			<span id="contactData" class="activeTab tabs">${labelContactData}</span>|
+			<span id="contactHobbies" class="tabs">${labelContactHobbies}</span>|
+			<span id="contactPlaces" class="tabs">${labelContactPlaces}</span>|
+			<span id="contactFriends" class="tabs">${labelContactFriends}</span>|
+			<span id="contactDetails" class="tabs">${labelContactDetails}</span>
+		</div>
+		<div id="contactDataTab">
+			<form:form modelAttribute="contact" id="contactUpdateForm" method="post"
+					action="${pageContext.request.contextPath}/contacts">
+				<p />
+				<c:if test="${not empty message}">
+					<div id="message" class="message.type">${message.message}</div>
+				</c:if>
+				<div id="operationResultMessage">
+					<p />
+				</div>
+				<form:label path="firstName">
+					${labelContactFirstName}
+				</form:label>
+				<form:input path="firstName" />
+				<div>
+					<form:errors path="firstName" cssClass="error" />
+				</div>
+				<p />
+				<form:label path="lastName">
+					${labelContactLastName}
+				</form:label>
+				<form:input path="lastName" />
+				<div>
+					<form:errors path="lastName" cssClass="error" />
+				</div>
+				<p />
+				<form:label path="birthDate">
+					${labelContactBirthDate}
+				</form:label>
+				<form:input path="birthDate" id="birthDate" />
+				<div>
+					<form:errors path="birthDate" cssClass="error" />
+				</div>
+				<p />
+
+				<form:hidden path="version" />
+				<form:hidden path="id" />
+
+				<button type="submit" id="contactSubmit">Save</button>
+				<button type="reset">Reset</button>
+
+			</form:form>
+		</div>
+		<div id="contactHobbiesTab" class="hiddenTab">
+			<p />
+			<table>
+				<tr>
+					<td width="45%">
+						<select style="width:100%;" size="10" id="usedHobbies" multiple="multiple">
+							<c:forEach var="hobby" items="${contact.hobbies}">
+								<option value="${hobby.title}">${hobby.title}</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td width="10%">
+			            <input id="MoveRight" type="button" value=" >> " />
+            			<br />
+						<input id="MoveLeft" type="button" value=" &#60;&#60; " />
+					</td>
+					<td width="45%">
+						<select style="width:100%;" size="10" id="unusedHobbies" multiple="multiple">
+							<c:forEach var="hobby" items="${unusedHobbies}">
+								<option value="${hobby.title}">${hobby.title}</option>
+							</c:forEach>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<input type="button" id="contactHobbiesSave" value="Save" />
+		</div>
+		<div id="contactPlacesTab" class="hiddenTab">
+			<p />
+		</div>
+		<div id="contactFriendsTab" class="hiddenTab">
+			<p />
+		</div>
+		<div id="contactDetailsTab" class="hiddenTab">
+			<p />
+		</div>
+		<a id="viewContact" href="${viewContactUrl}${contactId}">${labelContactView}</a>
+	</div>
+</div>
