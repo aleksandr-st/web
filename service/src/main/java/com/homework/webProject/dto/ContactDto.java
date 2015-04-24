@@ -2,8 +2,11 @@ package com.homework.webProject.dto;
 
 import java.util.Set;
 
+import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.homework.webProject.dto.ContactDetailDto;
 
 public class ContactDto {
 	private Long id;
@@ -75,8 +78,8 @@ public class ContactDto {
 	public Set<ContactDetailDto> getContactDetails() {
 		return contactDetails;
 	}
-	public void setContactDetails(Set<ContactDetailDto> contactDetails) {
-		this.contactDetails = contactDetails;
+	public void setContactDetails(Set<ContactDetailDto> contactDetails2) {
+		this.contactDetails = contactDetails2;
 	}
 	@Override
 	public String toString(){

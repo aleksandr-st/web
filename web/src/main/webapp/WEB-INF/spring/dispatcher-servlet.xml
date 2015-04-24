@@ -29,7 +29,9 @@
 		</beans:property>
 	</beans:bean>
 
-	<context:component-scan base-package="com.homework.webProject.controller" />
+	<context:component-scan base-package="com.homework.webProject.controller com.homework.webProject.util" />
+	
+	<beans:bean id="configConverter" class="com.homework.webProject.util.ConfigConverter" />
 	
 	<interceptors>
 		<beans:bean class="org.springframework.web.servlet.theme.ThemeChangeInterceptor" />

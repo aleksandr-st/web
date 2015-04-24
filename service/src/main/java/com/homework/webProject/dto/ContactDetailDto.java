@@ -8,6 +8,10 @@ public class ContactDetailDto {
 	
 	public ContactDetailDto(){
 	}
+	public ContactDetailDto(String type, String data){
+		this.type = type;
+		this.data = data;
+	}
 	public ContactDetailDto(String type, String data, ContactDto contact){
 		this.type = type;
 		this.data = data;

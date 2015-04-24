@@ -5,31 +5,47 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 
+import com.homework.webProject.dto.ContactDetailDto;
+import com.homework.webProject.dto.ContactDto;
+import com.homework.webProject.dto.HobbyDto;
+import com.homework.webProject.dto.MessageDto;
+import com.homework.webProject.dto.PlaceDto;
 import com.homework.webProject.model.Contact;
+import com.homework.webProject.model.ContactDetail;
 import com.homework.webProject.model.Hobby;
 import com.homework.webProject.model.Message;
 import com.homework.webProject.model.Place;
 
 public interface ContactService {
 	
-	Contact createContact(String firstName, String lastName, DateTime birthDate);
+	ContactDto contactToContactDto(Contact contact);
+	ContactDto contactToContactDtoWithDetails(Contact contact);
+	HobbyDto hobbyToHobbyDto(Hobby hobby);
+	MessageDto messageToMessageDto(Message message);
+	PlaceDto placeToPlaceDto(Place place);
+	ContactDetailDto detailToDetailDto(ContactDetail detail);
+	Contact contactDtoToContact(ContactDto contactDto);
 	
-	Hobby addHobby(String title, String description);
+	ContactDto createContact(String firstName, String lastName, DateTime birthDate);
 	
-	List<Hobby> unusedHobbies(Contact contact);
+	HobbyDto addHobby(String title, String description);
 	
-	Place addPlace(String title, String description, Double longitude, Double latitude);
+	List<HobbyDto> unusedHobbies(ContactDto contact);
 	
-	void addFriendship(Contact contact, Contact contactFriend);
+	PlaceDto addPlace(String title, String description, Double longitude, Double latitude);
 	
-	Set<Contact> getFriendList(Contact contact);
+	ContactDto addFriendship(ContactDto contact, ContactDto contactFriend);
+
+	ContactDto removeFriendship(ContactDto contact, ContactDto contactFriend);
+
+	Set<ContactDto> getFriendList(ContactDto contact);
 	
-	List<Message> getConversation(Contact contactSernder, Contact contactRecipient);
+	List<MessageDto> getConversation(ContactDto contactSernder, ContactDto contactRecipient);
 	
-	Contact findById(Long id);
+	ContactDto findById(Long id);
 	
-	List<Contact> findAll();
+	List<ContactDto> findAll();
 	
-	Contact addOrUpdate(Contact contact);
+	ContactDto addOrUpdate(ContactDto contact);
 
 }

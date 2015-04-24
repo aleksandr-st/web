@@ -8,6 +8,9 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 
 import com.homework.webProject.dao.ContactDao;
 import com.homework.webProject.dao.HobbyDao;
+import com.homework.webProject.dto.ContactDetailDto;
+import com.homework.webProject.dto.ContactDto;
+import com.homework.webProject.dto.HobbyDto;
 import com.homework.webProject.model.Contact;
 import com.homework.webProject.model.ContactDetail;
 import com.homework.webProject.model.Hobby;
@@ -30,43 +33,43 @@ public class ServiceApp {
 			System.out.println(contact);
 		}
 		
-		Contact contact = contactService.getContactDao().findById(1l);
+		ContactDto contact = contactService.findById(1l);
 		System.out.println("Contact friends:");
-		for (Contact c_friend: contact.getFriends()){
+		for (ContactDto c_friend: contact.getFriends()){
 			System.out.println("  f: " + c_friend.getFirstName());
 		}
 		System.out.println("Contact details:");
-		for (ContactDetail c_detail: contact.getContactDetails()){
+		for (ContactDetailDto c_detail: contact.getContactDetails()){
 			System.out.println("  d: " + c_detail);
 		}
-		Contact friend = contactService.getContactDao().findById(2l);
-		ContactDetail contactDetail = new ContactDetail("tel.","0356654666",contact);
-		Set<ContactDetail> contactDetails = contact.getContactDetails();
+		ContactDto friend = contactService.findById(2l);
+		ContactDetailDto contactDetail = new ContactDetailDto("tel.","0356654666",contact);
+		Set<ContactDetailDto> contactDetails = contact.getContactDetails();
 		contactDetails.add(contactDetail);
 		contact.setContactDetails(contactDetails);
 		contactService.addFriendship(contact, friend);
 		System.out.println("Contact friends after add:");
-		for (Contact c_friend: contact.getFriends()){
+		for (ContactDto c_friend: contact.getFriends()){
 			System.out.println("  f: " + c_friend.getFirstName());
 		}
-		contactService.getContactDao().removeFriendship(contact, friend);
+		contact = contactService.removeFriendship(contact, friend);
 		System.out.println("Contact friends after remove:");
-		for (Contact c_friend: contact.getFriends()){
+		for (ContactDto c_friend: contact.getFriends()){
 			System.out.println("  f: " + c_friend.getFirstName());
 		}
 		System.out.println("Contact hobbies:");
-		for (Hobby c_hobby: contact.getHobbies()){
+		for (HobbyDto c_hobby: contact.getHobbies()){
 			System.out.println("  h: " + c_hobby.getTitle());
 		}
 		Hobby hobby = contactService.getHobbyDao().findById("Programming");
 		contactService.getHobbyDao().removeHobby(hobby);
-		contact = contactService.getContactDao().findById(1l);
+		contact = contactService.findById(1l);
 		System.out.println("Contact hobbies after remove one:");
-		for (Hobby c_hobby: contact.getHobbies()){
+		for (HobbyDto c_hobby: contact.getHobbies()){
 			System.out.println("  h: " + c_hobby.getTitle());
 		}
 		System.out.println("Contact details after add one:");
-		for (ContactDetail c_detail: contact.getContactDetails()){
+		for (ContactDetailDto c_detail: contact.getContactDetails()){
 			System.out.println("  d: " + c_detail);
 		}
 		

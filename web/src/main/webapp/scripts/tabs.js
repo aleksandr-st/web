@@ -116,6 +116,7 @@ $(document).ready(function(){
     	if (hadErrors){
     		return false;
     	}
+    	alert("id:"+id+";ver:"+version+";name:"+firstName+";surn:"+lastName+";bd:"+birthDate);
     	var json = {id:id,version:version,firstName:firstName,lastName:lastName,
     			birthDate:birthDate};
     	$.ajax({
@@ -130,6 +131,7 @@ $(document).ready(function(){
     		success: function(contactJson){
     	    	$('#firstName').val(contactJson.firstName);
     	    	$('#lastName').val(contactJson.lastName);
+    	    	alert("Birth date: "+contactJson.birthDate);
     	    	$('#birthDate').val(contactJson.birthDate);
     	    	$('#version').val(contactJson.version);
     	    	$('#id').val(contactJson.id);

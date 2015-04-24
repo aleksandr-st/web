@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.homework.webProject.dto.ContactDto;
 import com.homework.webProject.form.MessageMS;
 import com.homework.webProject.model.Contact;
 import com.homework.webProject.service.ContactService;
@@ -43,8 +44,8 @@ public class ContactController {
 	public String showList(Model uiModel) {
 		System.out.println("in controller");
 		
-		List<Contact> contacts = contactService.findAll();
-		for(Contact contact: contacts){
+		List<ContactDto> contacts = contactService.findAll();
+		for(ContactDto contact: contacts){
 			System.out.println(contact);
 		}
 		
@@ -56,13 +57,13 @@ public class ContactController {
 	
 	@RequestMapping(value="/{id}", method = RequestMethod.GET)
 	public String show(@PathVariable("id") Long id, Model uiModel){
-		Contact contact = contactService.findById(id);
+		ContactDto contact = contactService.findById(id);
 		uiModel.addAttribute("contact", contact);
 		return "contacts/show";
 	}
 	
 	@RequestMapping(value="/{id}", params = "form", method = RequestMethod.POST)
-	public String update(Contact contact, BindingResult bindingResult, Model uiModel,
+	public String update(ContactDto contact, BindingResult bindingResult, Model uiModel,
 			HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes, Locale locale){
 		logger.info("Updating contact");
 		if (bindingResult.hasErrors()) {
@@ -73,7 +74,7 @@ public class ContactController {
 		uiModel.asMap().clear();
 		redirectAttributes.addFlashAttribute("message", new MessageMS("success", messageSource.getMessage("contact_save_success", 
 				new Object[] {}, locale)));
-		Contact contactForUpdate;
+		ContactDto contactForUpdate;
 		
 		contactForUpdate = contactService.findById(contact.getId());
 		contactForUpdate.setFirstName(contact.getFirstName());
@@ -88,14 +89,14 @@ public class ContactController {
 
 	@RequestMapping(value="/{id}", params = "form", method = RequestMethod.GET)
 	public String updateForm(@PathVariable("id") Long id, Model uiModel) {
-		Contact contact = contactService.findById(id);
+		ContactDto contact = contactService.findById(id);
 		uiModel.addAttribute("contact", contact);
 		uiModel.addAttribute("unusedHobbies", contactService.unusedHobbies(contact));
 		return "contacts/update";		
 	}
 
 	@RequestMapping(params = "form", method = RequestMethod.POST)
-	public String create(Contact contact, BindingResult bindingResult, Model uiModel,
+	public String create(ContactDto contact, BindingResult bindingResult, Model uiModel,
 			HttpServletRequest httpServletRequest, RedirectAttributes redirectAttributes, Locale locale){
 		logger.info("Creating contact");
 		if (bindingResult.hasErrors()) {
@@ -115,7 +116,7 @@ public class ContactController {
 
 	@RequestMapping(params = "form", method = RequestMethod.GET)
 	public String createForm(Model uiModel) {
-		Contact contact = new Contact();
+		ContactDto contact = new ContactDto();
 		uiModel.addAttribute("contact", contact);
 		uiModel.addAttribute("unusedHobbies", contactService.unusedHobbies(contact));
 		return "contacts/create";		
@@ -125,7 +126,7 @@ public class ContactController {
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Contact createJson(@RequestBody Contact contact){
+	public ContactDto createJson(@RequestBody ContactDto contact){
 		return contactService.addOrUpdate(contact);
 	}
 
@@ -133,10 +134,9 @@ public class ContactController {
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Contact updateJson(@RequestBody Contact contact, @PathVariable("id") Long id, 
+	public ContactDto updateJson(@RequestBody ContactDto contact, @PathVariable("id") Long id, 
 			RedirectAttributes redirectAttributes){
-		Contact contactForUpdate = contactService.findById(contact.getId());
-//		return contactService.addOrUpdate(contact);
+		ContactDto contactForUpdate = contactService.findById(contact.getId());
 		if ((contactForUpdate != null) && (contactForUpdate.getVersion()==contact.getVersion())){
 			contactForUpdate.setFirstName(contact.getFirstName());
 			contactForUpdate.setLastName(contact.getLastName());
