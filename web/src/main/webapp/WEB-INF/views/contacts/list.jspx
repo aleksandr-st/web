@@ -11,15 +11,17 @@
 	<spring:message code="label_contact_first_name" var="labelContactFirstName"/>
 	<spring:message code="label_contact_last_name" var="labelContactLastName"/>
 	<spring:message code="label_contact_birth_date" var="labelContactBirthDate"/>
+	<spring:message code="label_contact_action" var="labelContactAction"/>
 	
 	<h1>${labelContactList}</h1>
 	<c:if test="${not empty contacts}">
 		<table>
 			<thead>
 				<tr>
-					<th>${labelContactFirstName}</th>
-					<th>${labelContactLastName}</th>
-					<th>${labelContactBirthDate}</th>
+					<th width="25%">${labelContactFirstName}</th>
+					<th width="40%">${labelContactLastName}</th>
+					<th width="20%">${labelContactBirthDate}</th>
+					<th width="15%">${labelContactAction}</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -28,9 +30,11 @@
 						<td><a href="contacts/${contact.id}">${contact.firstName}</a></td>
 						<td>${contact.lastName}</td>
 						<td><joda:format value="${contact.birthDate}" pattern="yyyy-MM-dd" /></td>
+						<td><a href="contacts/delete/${contact.id}" class="c_del" value="${contact.id}">Delete</a><br/></td>
 					</tr>
 				</c:forEach>
 			</tbody>			
 		</table>
 	</c:if>
+	<div id="deleteResult"><p /></div>
 </div>

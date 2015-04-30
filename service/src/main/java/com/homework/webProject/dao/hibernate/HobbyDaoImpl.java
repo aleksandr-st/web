@@ -34,7 +34,7 @@ public class HobbyDaoImpl implements HobbyDao{
 	}
 	@Transactional(readOnly=true)
 	public List<Contact> getAllContactsWithHobby(Hobby hobby){
-		return sessionFactory.getCurrentSession().getNamedQuery("Hobby.findAllWithHoby").setParameter("hobbyId", hobby).list();
+		return sessionFactory.getCurrentSession().getNamedQuery("Hobby.findAllWithHobby").setParameter("hobbyId", hobby).list();
 	}
 	@Transactional(readOnly=true)
 	public Hobby findById(String id){

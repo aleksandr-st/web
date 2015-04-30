@@ -9,6 +9,7 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.homework.webProject.dao.ContactDao;
+import com.homework.webProject.dao.ContactDetailDao;
 import com.homework.webProject.dao.HobbyDao;
 import com.homework.webProject.dao.PlaceDao;
 import com.homework.webProject.dto.ContactDetailDto;
@@ -30,6 +31,8 @@ public class JavaContactService implements ContactService{
 	private HobbyDao hobbyDao;
 	@Resource(name="placeDao")
 	private PlaceDao placeDao;
+	@Resource(name="contactDetailDao")
+	private ContactDetailDao contactDetailDao;
 	
 	public JavaContactService(){
 	}
@@ -68,10 +71,17 @@ public class JavaContactService implements ContactService{
 		Contact contactSecond = contactDao.findById(contactFriend.getId());
 		return contactToContactDtoWithDetails(contactDao.addFriendship(contactFirst, contactSecond));
 	}
-	public Set<ContactDto> getFriendList(ContactDto contact){
-		Set<ContactDto> contactSet = null;
-		
-		return contactSet;
+	public List<ContactDto> getFriendList(ContactDto contactDto){
+		List<ContactDto> friendsDto = new ArrayList<ContactDto>();
+		if (contactDto.getId() != null) {
+			Contact contact = contactDao.findById(contactDto.getId());
+			if (contact.getFriends() != null) {
+				for (Contact friend : contact.getFriends()) {
+					friendsDto.add(contactToContactDto(friend));
+				}
+			}
+		}
+		return friendsDto;
 	}
 	public List<MessageDto> getConversation(ContactDto contactSender, ContactDto contactRecipient){
 		List<MessageDto> messageList = null;
@@ -117,27 +127,35 @@ public class JavaContactService implements ContactService{
 		ContactDto contactDto = contactToContactDto(contact);
 		Set<Hobby> hobbies = contact.getHobbies();
 		Set<HobbyDto> hobbiesDto = new HashSet<HobbyDto>();
-		for (Hobby hobby: hobbies){
-			hobbiesDto.add(hobbyToHobbyDto(hobby));
-		}
+		if (hobbies != null) {
+			for (Hobby hobby : hobbies) {
+				hobbiesDto.add(hobbyToHobbyDto(hobby));
+			};
+		};
 		contactDto.setHobbies(hobbiesDto);
 		Set<Place> places = contact.getPlaces();
 		Set<PlaceDto> placesDto = new HashSet<PlaceDto>();
-		for (Place place: places){
-			placesDto.add(placeToPlaceDto(place));
-		}
+		if (places != null) {
+			for (Place place : places) {
+				placesDto.add(placeToPlaceDto(place));
+			};
+		};
 		contactDto.setPlaces(placesDto);
 		Set<Contact> friends = contact.getFriends();
 		Set<ContactDto> friendsDto = new HashSet<ContactDto>();
-		for (Contact friend: friends){
-			friendsDto.add(contactToContactDto(friend));
-		}
+		if (friends != null) {
+			for (Contact friend : friends) {
+				friendsDto.add(contactToContactDto(friend));
+			};
+		};
 		contactDto.setFriends(friendsDto);
 		Set<ContactDetail> details = contact.getContactDetails();
 		Set<ContactDetailDto> detailsDto = new HashSet<ContactDetailDto>();
-		for (ContactDetail detail: details){
-			detailsDto.add(detailToDetailDto(detail));
-		}
+		if (details != null) {
+			for (ContactDetail detail : details) {
+				detailsDto.add(detailToDetailDto(detail));
+			};
+		};
 		contactDto.setContactDetails(detailsDto);
 		return contactDto;
 	}
@@ -168,8 +186,35 @@ public class JavaContactService implements ContactService{
 		contact.setFirstName(contactDto.getFirstName());
 		contact.setLastName(contactDto.getLastName());
 		contact.setBirthDate(contactDto.getBirthDate());
-//		System.out.println("time: "+contactDto.getBirthDate()+"; new time: "+contact.getBirthDate());
 		contact.setVersion(contactDto.getVersion());
+		if (contactDto.getHobbies() != null){
+			HashSet<Hobby> newHobbies = new HashSet<Hobby>();
+			for (HobbyDto hobbyDto: contactDto.getHobbies()){
+				newHobbies.add(hobbyDao.findById(hobbyDto.getTitle()));
+			}
+			contact.setHobbies(newHobbies);
+		}
+		if (contactDto.getPlaces() != null){
+			HashSet<Place> newPlaces = new HashSet<Place>();
+			for (PlaceDto placeDto: contactDto.getPlaces()){
+				newPlaces.add(placeDao.findById(placeDto.getTitle()));
+			}
+			contact.setPlaces(newPlaces);
+		}
+		if (contactDto.getFriends() != null){
+			HashSet<Contact> newFriends = new HashSet<Contact>();
+			for (ContactDto friendDto: contactDto.getFriends()){
+				newFriends.add(contactDao.findById(friendDto.getId()));
+			}
+			contact.setFriends(newFriends);
+		}
+		if (contactDto.getContactDetails() != null){
+			HashSet<ContactDetail> newDetails = new HashSet<ContactDetail>();
+			for (ContactDetailDto detailDto: contactDto.getContactDetails()){
+				newDetails.add(contactDetailDao.findById(detailDto.getId()));
+			}
+			contact.setContactDetails(newDetails);
+		}
 		return contact;
 	}
 	public ContactDto removeFriendship(ContactDto contact,
@@ -177,6 +222,37 @@ public class JavaContactService implements ContactService{
 		Contact contactFirst = contactDao.findById(contact.getId());
 		Contact contactSecond = contactDao.findById(contactFriend.getId());
 		return contactToContactDtoWithDetails(contactDao.removeFriendship(contactFirst, contactSecond));
+	}
+	public List<PlaceDto> unusedPlaces(ContactDto contact) {
+		Contact contactForRequest = contactDao.findById(contact.getId());
+		List<Place> places = placeDao.findAllUnusedForContact(contactForRequest);
+		List<PlaceDto> placesDto = new ArrayList<PlaceDto>();
+		for (Place place: places){
+			placesDto.add(placeToPlaceDto(place));
+		}
+		return placesDto;
+	}
+	public ContactDto deleteDetail(ContactDetailDto detail) {
+		ContactDetail contactDetail = contactDetailDao.findById(detail.getId());
+		Contact contact = contactDao.findById(contactDetail.getContact().getId());
+		Set<ContactDetail> details = contact.getContactDetails();
+		details.remove(contactDetail);
+		contact.setContactDetails(details);
+		return contactToContactDto(contactDao.addContact(contact));
+	}
+	public ContactDto addDetail(ContactDetailDto detail) {
+		ContactDetail contactDetail = new ContactDetail(detail.getType(),detail.getData());
+		Contact contact = contactDao.findById(detail.getContact().getId());
+		contactDetail.setContact(contact);
+		Set<ContactDetail> details = contact.getContactDetails();
+		details.add(contactDetail);
+		contact.setContactDetails(details);
+		return contactToContactDtoWithDetails(contactDao.addContact(contact));
+	}
+	public String deleteContact(ContactDto contact) {
+		Contact contactForDelete = contactDao.findById(contact.getId());
+		contactDao.deleteContact(contactForDelete);
+		return "Contact was deleted successfull.";
 	}
 
 }

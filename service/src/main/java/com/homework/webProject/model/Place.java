@@ -6,6 +6,12 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="place")
+@NamedQueries({
+	@NamedQuery(name="Place.findById",
+		query="select p from Place p where p.title = :id"),
+	@NamedQuery(name="Place.findAllWithPlace",
+		query="select distinct c from Contact c join fetch c.places p where p.title = :placeId"),
+})
 public class Place {
 	private String title;
 	private String description;
@@ -60,6 +66,22 @@ public class Place {
 	}
 	public void setContacts(Set<Contact> contacts) {
 		this.contacts = contacts;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Place other = (Place) obj;
+		if (title == null) {
+			if (other.getTitle() != null)
+				return false;
+		} else if (!title.equals(other.getTitle()))
+			return false;
+		return true;
 	}
 	@Override
 	public String toString(){

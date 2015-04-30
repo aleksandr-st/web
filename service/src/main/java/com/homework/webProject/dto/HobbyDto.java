@@ -6,6 +6,9 @@ public class HobbyDto {
 	
 	public HobbyDto(){		
 	}
+	public HobbyDto(String title){
+		this.title = title;
+	}
 	public HobbyDto(String title, String description){
 		this.title = title;
 		this.description = description;

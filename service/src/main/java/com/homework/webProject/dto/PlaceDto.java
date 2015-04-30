@@ -8,6 +8,9 @@ public class PlaceDto {
 
 	public PlaceDto(){
 	}
+	public PlaceDto(String title){
+		this.title = title;
+	}
 	public PlaceDto(String title, String description, Double longitude, Double latitude){
 		this.title = title;
 		this.description = description;

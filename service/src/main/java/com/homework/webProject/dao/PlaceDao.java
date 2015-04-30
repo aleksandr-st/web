@@ -11,4 +11,9 @@ public interface PlaceDao {
 	
 	List<Contact> getAllContactsForPlace(Place place);
 
+	public Place findById(String id);
+
+	public List<Place> findAll();
+
+	public List<Place> findAllUnusedForContact(Contact contact);
 }

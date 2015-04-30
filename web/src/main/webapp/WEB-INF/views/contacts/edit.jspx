@@ -19,6 +19,9 @@
 	<spring:message code="label_contact_friends" var="labelContactFriends"/>
 	<spring:message code="label_contact_details" var="labelContactDetails"/>
 	<spring:message code="label_contact_view" var="labelContactView"/>
+	<spring:message code="label_contact_action" var="labelContactAction"/>
+	<spring:message code="label_contact_detail_type" var="labelContactDetailType"/>
+	<spring:message code="label_contact_detail_data" var="labelContactDetailData"/>
 	<spring:url value="/contacts" var="viewContactUrl" />
 	<spring:eval expression="contact.id == null ? labelContactNew:labelContactUpdate" var="formTitle" />
 	<spring:eval expression="contact.id == null ? '':'/'+contact.id" var="contactId" />
@@ -77,6 +80,7 @@
 		</div>
 		<div id="contactHobbiesTab" class="hiddenTab">
 			<p />
+			<div id="saveHobbyResult"><p /></div>
 			<table>
 				<tr>
 					<td width="45%">
@@ -104,12 +108,69 @@
 		</div>
 		<div id="contactPlacesTab" class="hiddenTab">
 			<p />
+			<div id="savePlaceResult"><p /></div>
+			<table>
+				<tr>
+					<td width="45%">
+						<select style="width:100%;" size="10" id="usedPlaces" multiple="multiple">
+							<c:forEach var="place" items="${contact.places}">
+								<option value="${place.title}">${place.title}</option>
+							</c:forEach>
+						</select>
+					</td>
+					<td width="10%">
+			            <input id="MovePlaceRight" type="button" value=" >> " />
+            			<br />
+						<input id="MovePlaceLeft" type="button" value=" &#60;&#60; " />
+					</td>
+					<td width="45%">
+						<select style="width:100%;" size="10" id="unusedPlaces" multiple="multiple">
+							<c:forEach var="place" items="${unusedPlaces}">
+								<option value="${place.title}">${place.title}</option>
+							</c:forEach>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<input type="button" id="contactPlacesSave" value="Save" />
 		</div>
 		<div id="contactFriendsTab" class="hiddenTab">
 			<p />
 		</div>
 		<div id="contactDetailsTab" class="hiddenTab">
 			<p />
+			<div id="changeDetailResult"><p /></div>
+			<table id="detailsTable">
+				<tr>
+					<th width="30%">${labelContactDetailType}</th>
+					<th width="55%">${labelContactDetailData}</th>
+					<th width="15%">${labelContactAction}</th>
+				</tr>
+				<c:if test="${not empty contact.contactDetails}">
+					<c:forEach var="detail" items="${contact.contactDetails}">
+						<tr>
+							<td>${detail.type}</td>
+							<td>${detail.data}</td>
+							<td><a href="${viewContactUrl}${contactId}?deleteDetail=${detail.id}" class="d_del">Delete</a></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</table>
+			<p />
+			<table>
+				<tr>
+					<td width="30%">Type: 
+						<select style="width:70%;" size="1" id="newDetailType">
+							<option value="mob. tel." selected="selected">mob. tel.</option>
+							<option value="skype">skype</option>
+							<option value="e-mail">e-mail</option>
+							<option value="facebook">facebook</option>
+						</select>
+					</td>
+					<td width="55%">Data: <input type="text" id="newDetailData" value="" /></td>
+					<td width="15%"><input type="button" id="newDetailSave" value="Add new" /></td>
+				</tr>
+			</table>
 		</div>
 		<a id="viewContact" href="${viewContactUrl}${contactId}">${labelContactView}</a>
 	</div>

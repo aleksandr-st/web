@@ -8,6 +8,9 @@ public class ContactDetailDto {
 	
 	public ContactDetailDto(){
 	}
+	public ContactDetailDto(Long id){
+		this.id = id;
+	}
 	public ContactDetailDto(String type, String data){
 		this.type = type;
 		this.data = data;

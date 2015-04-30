@@ -1,5 +1,7 @@
 package com.homework.webProject.util;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +11,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 public class ConfigConverter {
 	public ConfigConverter() {
@@ -24,7 +30,10 @@ public class ConfigConverter {
 		for (HttpMessageConverter<?> messageConverter : messageConverters) {
 			if (messageConverter instanceof MappingJackson2HttpMessageConverter) {
 				MappingJackson2HttpMessageConverter m = (MappingJackson2HttpMessageConverter) messageConverter;
-				m.setObjectMapper(objectMapper);
+				ObjectMapper om = m.getObjectMapper();
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				om.setDateFormat(dateFormat);
+				m.setObjectMapper(om);
 			}
 		}
 	}

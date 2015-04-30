@@ -1,8 +1,6 @@
 package com.homework.webProject.service;
 
 import java.util.List;
-import java.util.Set;
-
 import org.joda.time.DateTime;
 
 import com.homework.webProject.dto.ContactDetailDto;
@@ -31,21 +29,28 @@ public interface ContactService {
 	HobbyDto addHobby(String title, String description);
 	
 	List<HobbyDto> unusedHobbies(ContactDto contact);
-	
+
+	List<PlaceDto> unusedPlaces(ContactDto contact);
+
 	PlaceDto addPlace(String title, String description, Double longitude, Double latitude);
 	
 	ContactDto addFriendship(ContactDto contact, ContactDto contactFriend);
 
 	ContactDto removeFriendship(ContactDto contact, ContactDto contactFriend);
 
-	Set<ContactDto> getFriendList(ContactDto contact);
+	List<ContactDto> getFriendList(ContactDto contact);
 	
 	List<MessageDto> getConversation(ContactDto contactSernder, ContactDto contactRecipient);
 	
 	ContactDto findById(Long id);
-	
+
+	ContactDto deleteDetail(ContactDetailDto detail);
+
+	ContactDto addDetail(ContactDetailDto detail);
+
 	List<ContactDto> findAll();
 	
 	ContactDto addOrUpdate(ContactDto contact);
 
+	String deleteContact(ContactDto contact);
 }
