@@ -89,6 +89,7 @@
 					<c:forEach var="friend" items="${contact.friends}">
 						<tr>
 							<td>${friend.firstName} ${friend.lastName}</td>
+							<td><a href="${editContactUrl}/messages/${contact.id}?recId=${friend.id}">Messages</a></td>
 						</tr>
 					</c:forEach>
 				</c:if>

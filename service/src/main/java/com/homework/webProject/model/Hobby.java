@@ -1,5 +1,6 @@
 package com.homework.webProject.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -12,7 +13,11 @@ import javax.persistence.*;
 	@NamedQuery(name="Hobby.findAllWithHobby",
 		query="select distinct c from Contact c join fetch c.hobbies h where h.title = :hobbyId"),
 })
-public class Hobby {
+public class Hobby implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3078072092407757556L;
 	@Id
 	@Column(name="HOBBY_ID")
 	private String title;

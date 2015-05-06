@@ -53,5 +53,11 @@ public class ContactDaoImpl implements ContactDao{
 	public Contact findById(Long id) {
 		return (Contact)sessionFactory.getCurrentSession().getNamedQuery("Contact.findById").setParameter("id", id).uniqueResult();
 	}
+	public List<Contact> findByName(String name) {
+		return sessionFactory.getCurrentSession().getNamedQuery("Contact.findByName").setParameter("name", name.toUpperCase()).list();
+	}
+	public Contact findByIdWithoutDetails(Long id) {
+		return (Contact)sessionFactory.getCurrentSession().getNamedQuery("Contact.findByIdWithoutDetails").setParameter("id", id).uniqueResult();
+	}
 
 }

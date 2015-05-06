@@ -17,9 +17,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 	@NamedQuery(name="Contact.findById",
 			query="select distinct c from Contact c left join fetch c.hobbies h "
 					+ "left join fetch c.places p left join fetch c.friends f "
-					+ "left join fetch c.contactDetails d where c.id = :id")
+					+ "left join fetch c.contactDetails d where c.id = :id"),
+	@NamedQuery(name="Contact.findByIdWithoutDetails",
+			query="select distinct c from Contact c where c.id = :id"),
+	@NamedQuery(name="Contact.findByName",
+	query="select distinct c from Contact c where UPPER(c.firstName) like :name")
 })
 public class Contact implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8801680226684788819L;
 	@Id
 	@GeneratedValue(strategy=IDENTITY)
 	@Column(name="ID")
@@ -56,6 +64,12 @@ public class Contact implements Serializable{
 	@OneToMany(mappedBy = "contact", cascade=CascadeType.ALL,
 			orphanRemoval=true)
 	private Set<ContactDetail> contactDetails;
+	@OneToMany(mappedBy = "from", cascade=CascadeType.ALL,
+			orphanRemoval=true, fetch = FetchType.LAZY)
+	private Set<Message> messagesSend;
+	@OneToMany(mappedBy = "to", cascade=CascadeType.ALL,
+			orphanRemoval=true, fetch = FetchType.LAZY)
+	private Set<Message> messagesReceived;
 	
 	public Contact(){
 	}
@@ -87,6 +101,9 @@ public class Contact implements Serializable{
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	public String getFullName() {
+		return this.firstName+" "+this.lastName;
 	}
 	public DateTime getBirthDate() {
 		return this.birthDate;

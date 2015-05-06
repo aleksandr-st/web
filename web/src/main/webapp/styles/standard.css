@@ -242,6 +242,16 @@ tr:nth-child(even) {
 	background-color: #EFEFEF;
 }
 
+#messagesTable tr {
+	background-color: #FFFFFF;
+	border: 0px none;
+}
+
+#messagesTable td {
+	background-color: #FFFFFF;
+	border: 0px none;
+}
+
 a:link {
 	color: #7db223;
 }

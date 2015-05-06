@@ -9,6 +9,7 @@
 </head>
 <body>
  
+	<jsp:forward page="contacts" />
 	<center>
 		<h2>Wellcome!</h2>
 		<h3>

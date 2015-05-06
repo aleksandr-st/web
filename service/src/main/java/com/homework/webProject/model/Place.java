@@ -1,5 +1,6 @@
 package com.homework.webProject.model;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -12,7 +13,11 @@ import javax.persistence.*;
 	@NamedQuery(name="Place.findAllWithPlace",
 		query="select distinct c from Contact c join fetch c.places p where p.title = :placeId"),
 })
-public class Place {
+public class Place implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6259274754606133796L;
 	private String title;
 	private String description;
 	private Double longitude;

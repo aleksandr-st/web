@@ -12,7 +12,6 @@ import com.homework.webProject.dto.ContactDetailDto;
 import com.homework.webProject.dto.ContactDto;
 import com.homework.webProject.dto.HobbyDto;
 import com.homework.webProject.model.Contact;
-import com.homework.webProject.model.ContactDetail;
 import com.homework.webProject.model.Hobby;
 
 public class ServiceApp {
@@ -74,6 +73,8 @@ public class ServiceApp {
 		}
 		
 		System.out.println(contact);
+		
+		ctx.close();
 }
 
 }

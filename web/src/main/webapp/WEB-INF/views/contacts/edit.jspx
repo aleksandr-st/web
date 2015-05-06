@@ -77,6 +77,7 @@
 				<button type="reset">Reset</button>
 
 			</form:form>
+			<p />
 		</div>
 		<div id="contactHobbiesTab" class="hiddenTab">
 			<p />
@@ -105,6 +106,7 @@
 				</tr>
 			</table>
 			<input type="button" id="contactHobbiesSave" value="Save" />
+			<p />
 		</div>
 		<div id="contactPlacesTab" class="hiddenTab">
 			<p />
@@ -133,8 +135,45 @@
 				</tr>
 			</table>
 			<input type="button" id="contactPlacesSave" value="Save" />
+			<p />
 		</div>
 		<div id="contactFriendsTab" class="hiddenTab">
+			<p />
+			<div id="changeFriendsResult"><p /></div>
+			<table id="friendsTable">
+				<tr>
+					<th width="30%">${labelContactFirstName}</th>
+					<th width="55%">${labelContactLastName}</th>
+					<th width="15%">${labelContactAction}</th>
+				</tr>
+				<c:if test="${not empty contact.friends}">
+					<c:forEach var="friend" items="${contact.friends}">
+						<tr>
+							<td>${friend.firstName}</td>
+							<td>${friend.lastName}</td>
+							<td><a href="${viewContactUrl}${contactId}?deleteFriend=${friend.id}" class="f_del">Delete</a></td>
+						</tr>
+					</c:forEach>
+				</c:if>
+			</table>
+			<p />
+			<table>
+				<tr>
+					<td width="30%">Find by first name:</td>
+					<td width="55%"><input type="text" id="findFriendsText" value="" /></td>
+					<td width="15%"><input type="button" id="findFriends" value="find" /></td>
+				</tr>
+			</table>
+			<p />
+			<table id="foundFriendsTable">
+				<tr>
+					<th width="30%">${labelContactFirstName}</th>
+					<th width="55%">${labelContactLastName}</th>
+					<th width="15%">${labelContactAction}</th>
+				</tr>
+			</table>
+			<p />
+			<div id="searchFriendsResult"><p /></div>
 			<p />
 		</div>
 		<div id="contactDetailsTab" class="hiddenTab">
@@ -171,6 +210,7 @@
 					<td width="15%"><input type="button" id="newDetailSave" value="Add new" /></td>
 				</tr>
 			</table>
+			<p />
 		</div>
 		<a id="viewContact" href="${viewContactUrl}${contactId}">${labelContactView}</a>
 	</div>

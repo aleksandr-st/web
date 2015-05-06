@@ -44,13 +44,21 @@ public interface ContactService {
 	
 	ContactDto findById(Long id);
 
+	ContactDto findByIdWithoutDetails(Long id);
+
 	ContactDto deleteDetail(ContactDetailDto detail);
 
 	ContactDto addDetail(ContactDetailDto detail);
 
 	List<ContactDto> findAll();
+
+	List<ContactDto> findbyName(ContactDto contactDto, String name);
 	
 	ContactDto addOrUpdate(ContactDto contact);
 
 	String deleteContact(ContactDto contact);
+	
+	MessageDto addMessage(ContactDto sender, ContactDto recipient, String message);
+
+	List<MessageDto> newIncomeMessages(ContactDto sender, ContactDto recipient, Long lastId);
 }

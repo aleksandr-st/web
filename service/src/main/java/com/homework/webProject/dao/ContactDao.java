@@ -9,6 +9,10 @@ public interface ContactDao {
 	public List<Contact> findAll();
 	
 	public Contact findById(Long id);
+
+	public Contact findByIdWithoutDetails(Long id);
+	
+	public List<Contact> findByName(String name);
 	
 	public Contact addContact(Contact contact);
 	

@@ -5,12 +5,12 @@ import java.util.*;
 import javax.annotation.Resource;
 
 import org.joda.time.DateTime;
-import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.homework.webProject.dao.ContactDao;
 import com.homework.webProject.dao.ContactDetailDao;
 import com.homework.webProject.dao.HobbyDao;
+import com.homework.webProject.dao.MessageDao;
 import com.homework.webProject.dao.PlaceDao;
 import com.homework.webProject.dto.ContactDetailDto;
 import com.homework.webProject.dto.ContactDto;
@@ -33,6 +33,8 @@ public class JavaContactService implements ContactService{
 	private PlaceDao placeDao;
 	@Resource(name="contactDetailDao")
 	private ContactDetailDao contactDetailDao;
+	@Resource(name="messageDao")
+	private MessageDao messageDao;
 	
 	public JavaContactService(){
 	}
@@ -84,9 +86,18 @@ public class JavaContactService implements ContactService{
 		return friendsDto;
 	}
 	public List<MessageDto> getConversation(ContactDto contactSender, ContactDto contactRecipient){
-		List<MessageDto> messageList = null;
-		
-		return messageList;
+		List<MessageDto> messagesDto = new ArrayList<MessageDto>();
+		Contact contact1 = contactDao.findByIdWithoutDetails(contactSender.getId());
+		Contact contact2 = contactDao.findByIdWithoutDetails(contactRecipient.getId());
+		List<Message> messages = messageDao.getConvercation(contact1, contact2);
+		Iterator<Message> it = messages.iterator();
+		Message message = null;
+		while (it.hasNext()){
+			message = it.next();
+			messagesDto.add(messageToMessageDto(message));
+			System.out.println(message);
+		}
+		return messagesDto;
 	}
 	public ContactDto findById(Long id) {
 		Contact contact = contactDao.findById(id); 
@@ -164,8 +175,12 @@ public class JavaContactService implements ContactService{
 		return hobbyDto;
 	}
 	public MessageDto messageToMessageDto(Message message) {
-		// TODO Auto-generated method stub
-		return null;
+		ContactDto from = contactToContactDto(message.getFrom());
+		ContactDto to = contactToContactDto(message.getTo());
+		MessageDto messageDto = new MessageDto(message.getDate(), from, 
+				to, message.getContent());
+		messageDto.setId(message.getId());
+		return messageDto;
 	}
 	public PlaceDto placeToPlaceDto(Place place) {
 		PlaceDto placeDto = new PlaceDto(place.getTitle(),
@@ -253,6 +268,47 @@ public class JavaContactService implements ContactService{
 		Contact contactForDelete = contactDao.findById(contact.getId());
 		contactDao.deleteContact(contactForDelete);
 		return "Contact was deleted successfull.";
+	}
+	public List<ContactDto> findbyName(ContactDto contactDto, String name) {
+		Contact contact = contactDao.findById(contactDto.getId());
+		List<Contact> foundContacts = contactDao.findByName(name);
+		List<ContactDto> foundContactsDto = new ArrayList<ContactDto>();
+		Set<Contact> friends = contact.getFriends();
+		Contact contactIt;
+		Iterator<Contact> it = foundContacts.iterator();
+		while (it.hasNext()) {
+			contactIt = it.next();
+			if (!contactIt.equals(contact)) {
+				if (!friends.contains(contactIt)) {
+					foundContactsDto.add(contactToContactDto(contactIt));
+				}
+			}
+		}
+		return foundContactsDto;
+	}
+	public MessageDto addMessage(ContactDto sender, ContactDto recipient,
+			String content) {
+		Message message = new Message(new DateTime(), contactDao.findById(sender.getId()),
+				contactDao.findById(recipient.getId()), content);
+		return messageToMessageDto(messageDao.addMessage(message));
+	}
+	public ContactDto findByIdWithoutDetails(Long id) {
+		Contact contact = contactDao.findByIdWithoutDetails(id); 
+		return contactToContactDto(contact);
+	}
+	public List<MessageDto> newIncomeMessages(ContactDto sender,
+			ContactDto recipient, Long lastId) {
+		Contact contact1 = contactDao.findByIdWithoutDetails(sender.getId());
+		Contact contact2 = contactDao.findByIdWithoutDetails(recipient.getId());
+		List<MessageDto> messagesDto = new ArrayList<MessageDto>();
+		List<Message> messages = messageDao.getNewIncome(contact1, contact2, lastId);
+		Message messageIt;
+		Iterator<Message> it = messages.iterator();
+		while (it.hasNext()) {
+			messageIt = it.next();
+			messagesDto.add(messageToMessageDto(messageIt));
+		}
+		return messagesDto;
 	}
 
 }

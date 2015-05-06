@@ -120,7 +120,6 @@ $(document).ready(function(){
     	if (hadErrors){
     		return false;
     	}
-    	alert("id:"+id+";ver:"+version+";name:"+firstName+";surn:"+lastName+";bd:"+birthDate);
     	var json = {id:id,version:version,firstName:firstName,lastName:lastName,
     			birthDate:birthDate};
     	$.ajax({
@@ -136,14 +135,12 @@ $(document).ready(function(){
     	    	$('#firstName').val(contactJson.firstName);
     	    	$('#lastName').val(contactJson.lastName);
     	    	var strBirthDate = contactJson.birthDate; 
-    	    	alert("Birth date: "+strBirthDate);
     	    	$('#birthDate').val(strBirthDate.substring(0,10));
     	    	$('#version').val(contactJson.version);
     	    	$('#id').val(contactJson.id);
 
     	    	$('#operationResultMessage').addClass("success");
     	    	$('#operationResultMessage').html('Contact saved successful!');
-    			alert("Id "+contactJson.id+" name: "+contactJson.firstName);
     	    	
     	    	$('#viewContact').attr('href',$('#contactUpdateForm').attr('action')+'/'+contactJson.id);
     		}
@@ -200,7 +197,6 @@ $(document).ready(function(){
 
     	    	$('#saveHobbyResult').addClass("success");
     	    	$('#saveHobbyResult').html('Contact saved successful!');
-    			alert("Id "+contactJson.id+" name: "+contactJson.firstName);
      		}
     	});
     });
@@ -233,7 +229,6 @@ $(document).ready(function(){
 
     	    	$('#savePlaceResult').addClass("success");
     	    	$('#savePlaceResult').html('Contact saved successful!');
-    			alert("Id "+contactJson.id+" name: "+contactJson.firstName);
      		}
     	});
     });
@@ -271,6 +266,124 @@ $(document).ready(function(){
     	event.preventDefault();
     });
 
+    $('body').on('click', '.f_del', function(event) {
+    	var version = $('#version').val();
+    	var id = $('#id').val();
+    	var json = {id:id,version:version};
+
+    	$.ajax({
+			url : $(event.target).attr("href"),
+    		data: JSON.stringify(json),
+			type : "DELETE",
+	
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader("Accept","application/json");
+				xhr.setRequestHeader("Content-Type","application/json");
+			},
+	
+			success : function(contactJson) {
+    	    	$('#firstName').val(contactJson.firstName);
+    	    	$('#lastName').val(contactJson.lastName);
+    	    	var strBirthDate = contactJson.birthDate; 
+    	    	$('#birthDate').val(strBirthDate.substring(0,10));
+    	    	$('#version').val(contactJson.version);
+    	    	$('#id').val(contactJson.id);
+				var rowToDelete = $(event.target).closest("tr");
+				rowToDelete.remove();
+				
+    	    	$('#changeFriendsResult').addClass("success");
+    	    	$('#changeFriendsResult').html('Friend was deleted successful!');
+			}
+		});
+
+    	event.preventDefault();
+    });
+
+    $('body').on('click', '.f_add', function(event) {
+    	var version = $('#version').val();
+    	var id = $('#id').val();
+    	var json = {id:id,version:version};
+
+    	$.ajax({
+			url : $(event.target).attr("href"),
+    		data: JSON.stringify(json),
+			type : "POST",
+	
+			beforeSend : function(xhr) {
+				xhr.setRequestHeader("Accept","application/json");
+				xhr.setRequestHeader("Content-Type","application/json");
+			},
+	
+			success : function(contactJson) {
+    	    	$('#firstName').val(contactJson.firstName);
+    	    	$('#lastName').val(contactJson.lastName);
+    	    	var strBirthDate = contactJson.birthDate; 
+    	    	$('#birthDate').val(strBirthDate.substring(0,10));
+    	    	$('#version').val(contactJson.version);
+    	    	$('#id').val(contactJson.id);
+				var rowToDelete = $(event.target).closest("tr");
+				rowToDelete.remove();
+				
+    	        $('#friendsTable tr').each(function (i, row) {
+    	        	var $row = $(row);
+    	        	if (i > 0){
+    	               $row.remove(); 
+    	           }
+    	        });
+    	        $.each(contactJson.friends, function(i, obj){
+        	    	$('#friendsTable').append('<tr><td>'+obj.firstName
+        	    			+'</td><td>'+obj.lastName
+        	    			+'</td><td><a href="'+$('#contactUpdateForm').attr('action')
+        	    			+'/'+$('#id').val()+'?deleteFriend='+obj.id
+        	    			+'" class="f_del">Delete</a></td></tr>');
+    	    	});
+
+    	        $('#changeFriendsResult').addClass("success");
+    	    	$('#changeFriendsResult').html('Friend was added successful!');
+			}
+		});
+
+    	event.preventDefault();
+    });
+
+    $('#findFriends').click(function(event){
+    	var version = $('#version').val();
+    	var id = $('#id').val();
+    	var firstName = $("#findFriendsText").val();
+    	var jsonUrl = $("#contactUpdateForm").attr("action")+"/" + id +"?findFriends="+firstName;
+
+    	var json = {id:id,version:version};
+    	$.ajax({
+    		url: jsonUrl,
+    		data: JSON.stringify(json),
+    		type: "GET",
+    		
+    		beforeSend: function(xhr){
+    			xhr.setRequestHeader("Accept","application/json");
+    			xhr.setRequestHeader("Content-Type","application/json");
+    		},
+    		success: function(contactsJson){
+    	        $('#foundFriendsTable tr').each(function (i, row) {
+    	        	var $row = $(row);
+    	        	if (i > 0){
+    	               $row.remove(); 
+    	           }
+    	        });
+    	        var foundContacts = 0;
+    	        $.each(contactsJson, function(i, obj){
+        	    	$('#foundFriendsTable').append('<tr><td>'+obj.firstName
+        	    			+'</td><td>'+obj.lastName
+        	    			+'</td><td><a href="'+$('#contactUpdateForm').attr('action')
+        	    			+'/'+$('#id').val()+'?addFriend='+obj.id
+        	    			+'" class="f_add">Add</a></td></tr>');
+        	    	foundContacts++;
+    	    	});
+ 
+    	    	$('#searchFriendsResult').html("<span>По запросу найдено "+foundContacts+" контактов</span>");
+     		}
+    	});
+    });
+
     $('#newDetailSave').click(function(event){
     	var version = $('#version').val();
     	var id = $('#id').val();
@@ -278,9 +391,6 @@ $(document).ready(function(){
     	var type = $("#newDetailType").val();
         var data = $('#newDetailData').val();
 
-    	var places = $('#usedPlaces option').map(function(){
-    		return this.value;
-        }).get();
     	var json = {id:id,version:version,contactDetails:[{type:type,data:data}]};
     	$.ajax({
     		url: jsonUrl,
@@ -318,7 +428,6 @@ $(document).ready(function(){
     	    			+'" class="d_del">Delete</a></td></tr>');
     	    	$('#changeDetailResult').addClass("success");
     	    	$('#changeDetailResult').html('Contact saved successful!');
-    			alert("Id "+contactJson.id+" name: "+contactJson.firstName);
      		}
     	});
     });

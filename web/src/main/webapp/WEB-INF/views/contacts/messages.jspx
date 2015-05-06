@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:form="http://www.springframework.org/tags/form"
+	xmlns:joda="http://www.joda.org/joda/time/tags"
+	version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+	<spring:message code="label_contact_first_name" var="labelContactFirstName"/>
+	<spring:message code="label_contact_last_name" var="labelContactLastName"/>
+	<spring:message code="label_contact_birth_date" var="labelContactBirthDate"/>
+	<spring:message code="label_contact_data" var="labelContactData"/>
+	<spring:message code="label_contact_friends" var="labelContactFriends"/>
+	<spring:message code="label_contact_messages" var="labelContactMessages"/>
+	<spring:message code="label_contact_view" var="labelContactView"/>
+	<spring:message code="label_contact_action" var="labelContactAction"/>
+	<spring:url value="/contacts" var="viewContactUrl" />
+	<spring:eval expression="contact.id == null ? '':'/'+contact.id" var="contactId" />
+
+	<head>
+		<spring:url value="/resources" var="resources_root_url" />
+	    <script type="text/javascript" src="${resources_root_url}/scripts/messages.js" >
+	    	<!-- Empty -->
+	    </script>
+	</head>
+	
+	<h1>${labelContactMessages}</h1>
+	<div id="contactMessages">
+		<p />
+		<div id="scrollTable" style="width:100%; height:450px;overflow:auto;overflow-x:hidden;">
+		<table id="messagesTable">
+			<c:if test="${not empty messagesList}">
+				<c:forEach var="message" items="${messagesList}">
+					<tr>
+						<c:if test="${message.from.id == contact.id}">
+							<td style="text-align: left">
+								<b>${message.content}</b>
+								<p />
+								<joda:format value="${message.date}" pattern="yyyy-MM-dd HH:mm:ss" />
+							</td>
+						</c:if>
+						<c:if test="${message.from.id != contact.id}">
+							<td style="text-align: right">
+								<b>${message.content}</b>
+								<p />
+								<joda:format value="${message.date}" pattern="yyyy-MM-dd HH:mm:ss" />
+							</td>
+						</c:if>
+					</tr>
+				</c:forEach>
+			</c:if>
+		</table>
+		</div>
+		<p />
+		From: <input type="text" id="contactFrom" value="${contact.firstName} ${contact.lastName}" disabled="disabled" /> To: <input type="text" id="contactTo" value="${recipient.firstName} ${recipient.lastName}" disabled="disabled" />
+		<p />
+		Message: <input type="text" style="width:95%" id="messageText" value="" />
+		<p />
+		<input type="hidden" id="contactId" value="${contact.id}" />
+		<input type="hidden" id="recipientId" value="${recipient.id}" />
+		<input type="hidden" id="lastId" value="${lastId}" />
+		<input type="button" id="sendMessage" value="Send message" />
+		<p />
+		<a id="viewContact" href="${viewContactUrl}${contactId}">${labelContactView}</a>
+	</div>
+</div>

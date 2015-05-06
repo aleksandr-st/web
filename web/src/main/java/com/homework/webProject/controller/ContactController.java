@@ -29,8 +29,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.homework.webProject.dto.ContactDetailDto;
 import com.homework.webProject.dto.ContactDto;
+import com.homework.webProject.dto.MessageDto;
 import com.homework.webProject.form.MessageMS;
-import com.homework.webProject.model.Contact;
 import com.homework.webProject.service.ContactService;
 import com.homework.webProject.util.UrlUtil;
 
@@ -51,9 +51,6 @@ public class ContactController {
 		System.out.println("in controller");
 		
 		List<ContactDto> contacts = contactService.findAll();
-		for(ContactDto contact: contacts){
-			System.out.println(contact);
-		}
 		
 		logger.info("No. of contacts " + contacts.size());
 		
@@ -200,6 +197,49 @@ public class ContactController {
 		}
 	}
 
+	@RequestMapping(value="/{id}", params = "deleteFriend", method = RequestMethod.DELETE,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ContactDto deleteFriend(@RequestBody ContactDto contact, @PathVariable("id") Long id,
+			RedirectAttributes redirectAttributes, @RequestParam(value="deleteFriend", required=true) Long friendId){
+		ContactDto contactForUpdate = contactService.findById(contact.getId());
+		if ((contactForUpdate != null) && (contactForUpdate.getVersion()==contact.getVersion())){
+			ContactDto friend = contactService.findById(friendId);
+			return contactService.removeFriendship(contactForUpdate, friend);
+		} else {
+			return contactForUpdate;
+		}
+	}
+
+	@RequestMapping(value="/{id}", params = "addFriend", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public ContactDto addFriend(@RequestBody ContactDto contact, @PathVariable("id") Long id,
+			RedirectAttributes redirectAttributes, @RequestParam(value="addFriend", required=true) Long friendId){
+		ContactDto contactForUpdate = contactService.findById(contact.getId());
+		if ((contactForUpdate != null) && (contactForUpdate.getVersion()==contact.getVersion())){
+			ContactDto friend = contactService.findById(friendId);
+			return contactService.addFriendship(contactForUpdate, friend);
+		} else {
+			return contactForUpdate;
+		}
+	}
+
+	@RequestMapping(value="/{id}", params = "findFriends", method = RequestMethod.GET,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<ContactDto> findFriends(@PathVariable("id") Long id,
+			RedirectAttributes redirectAttributes, @RequestParam(value="findFriends", required=true) String findName){
+		ContactDto contactForSearch = contactService.findById(id);
+		if (contactForSearch != null){
+			return contactService.findbyName(contactForSearch, findName+"%");
+		} else {
+			return null;
+		}
+	}
 	@RequestMapping(value="/{id}", params = "AddDetail", method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE, 
 			consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -234,6 +274,49 @@ public class ContactController {
 		Map<String,String> answer = new HashMap<String, String>();
 		answer.put("answer", result);
 		return answer;
+	}
+
+	@RequestMapping(value="/messages/{id}", params="recId" ,method = RequestMethod.GET)
+	public String showMessages(@PathVariable("id") Long id,@RequestParam(value="recId",required=true) Long recId,
+			Model uiModel){
+		ContactDto contact = contactService.findByIdWithoutDetails(id);
+		uiModel.addAttribute("contact", contact);
+		ContactDto recipient = contactService.findByIdWithoutDetails(recId);
+		uiModel.addAttribute("recipient", recipient);
+		List<MessageDto> messagesList = contactService.getConversation(contact, recipient);
+		uiModel.addAttribute("messagesList", messagesList);
+		Iterator<MessageDto> it = messagesList.iterator();
+		Long lastId = new Long(0l);
+		MessageDto messageForIterator = null;
+		while(it.hasNext()){
+			messageForIterator = it.next();
+			if (messageForIterator.getId() > lastId){
+				lastId = messageForIterator.getId();
+			}
+		}
+		uiModel.addAttribute("lastId", lastId);
+		return "contacts/messages";
+	}
+
+	@RequestMapping(value="/messages/{id}", params="addMessage" ,method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody	
+	public MessageDto addMessage(@RequestBody MessageDto message, @PathVariable("id") Long id){
+		ContactDto sender = contactService.findByIdWithoutDetails(message.getFrom().getId());
+		ContactDto recipient = contactService.findByIdWithoutDetails(message.getTo().getId());
+		String content = message.getContent();
+		return contactService.addMessage(sender, recipient, content);
+	}
+
+	@RequestMapping(value="/messages/{id}", params="checkNewMes", method = RequestMethod.POST,
+			produces = MediaType.APPLICATION_JSON_VALUE, 
+			consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody	
+	public List<MessageDto> checkNewMessages(@RequestBody MessageDto message, @PathVariable("id") Long id){
+		ContactDto sender = contactService.findByIdWithoutDetails(message.getFrom().getId());
+		ContactDto recipient = contactService.findByIdWithoutDetails(message.getTo().getId());
+		return contactService.newIncomeMessages(sender, recipient, message.getId());
 	}
 
 	@ExceptionHandler

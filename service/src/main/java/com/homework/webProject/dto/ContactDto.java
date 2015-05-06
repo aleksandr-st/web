@@ -2,7 +2,6 @@ package com.homework.webProject.dto;
 
 import java.util.Set;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -50,6 +49,9 @@ public class ContactDto {
 	}
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+	public String getFullName() {
+		return this.firstName+" "+this.lastName;
 	}
 	public DateTime getBirthDate() {
 		return this.birthDate;
