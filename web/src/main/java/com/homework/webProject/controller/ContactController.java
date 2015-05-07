@@ -323,5 +323,4 @@ public class ContactController {
 	public void exceptionHandler(Exception ex){
 		ex.printStackTrace();
 	}
-	
 }
