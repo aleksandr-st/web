@@ -10,7 +10,52 @@ $(document).ready(function(){
 		return true;
 	}
 	
-    $("#contactData").click(function(){
+	function checkDate(){
+		var result = true;
+		var send_date = $('#birthDate').val();
+		if (send_date.length != 10){
+			result = false;
+		}
+		if (send_date.substring(4,5) != "-"){
+			result = false;
+		}
+		if (send_date.substring(7,8) != "-"){
+			result = false;
+		}
+		var year = parseInt(send_date.substring(0,4),10);
+		if (((year < 1920) || (year > 2000))) {
+			alert("Year must be between 1920 and 2000.");
+			result = false;
+		};
+		var month = parseInt(send_date.substring(5,7),10);
+		var maxDay = 31;
+		if (((month < 1) || (month > 12))) {
+			alert("Month must be between 01 and 12.\nCurrent value "+month+" is incorrect.");
+			result = false;
+		};
+		switch (month){
+			case 2:
+				maxDay = 28;
+				break;
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				maxDay = 30;
+				break;
+		};
+		var day = parseInt(send_date.substring(8,10),10);
+		if (((day < 1) || (day > maxDay))) {
+			alert("Day must be between 01 and "+maxDay+".\nCurrent value "+day+" is incorrect.");
+			result = false;
+		};
+		if (!result){
+			alert("Format for date must be 'yyyy-MM-dd'!")
+		}
+		return result;
+	}
+
+	$("#contactData").click(function(){
         $("#contactDataTab").removeClass("hiddenTab");
         $("#contactHobbiesTab").addClass("hiddenTab");
         $("#contactPlacesTab").addClass("hiddenTab");
@@ -114,10 +159,13 @@ $(document).ready(function(){
     		hadErrors = true;
     	};
     	if ((birthDate === "") || (birthDate == undefined)) {
-    		alert("Birth date is required!");
+    		alert("Birth date is required!\nAnd must be in format yyyy-MM-dd.");
     		hadErrors = true;
     	};
     	if (hadErrors){
+    		return false;
+    	}
+    	if (!checkDate()){
     		return false;
     	}
     	var json = {id:id,version:version,firstName:firstName,lastName:lastName,
